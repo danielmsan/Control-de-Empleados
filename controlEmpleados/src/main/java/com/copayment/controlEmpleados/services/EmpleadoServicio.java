@@ -1,5 +1,7 @@
 package com.copayment.controlEmpleados.services;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class EmpleadoServicio {
         return empleadoRepositorio.findAll();
     }
     
-    //Create
+    //Read
     //Este metodo utiliza findById para buscar por el id del empleado
     public Empleado findById(Long id) {
         return empleadoRepositorio.findById(id).orElse(null);
@@ -38,4 +40,24 @@ public class EmpleadoServicio {
     public void delete(Empleado empleado) {
         empleadoRepositorio.delete(empleado);
     }
+    //Calcula las horas trabajadas del empleado
+    public double calcularHorasTrabajadas(Long id) {
+        Empleado empleado = empleadoRepositorio.findById(id).orElseThrow();
+        LocalDateTime horaEntrada = empleado.getHoraEntrada();
+        LocalDateTime horaSalida = empleado.getHoraSalida();
+        
+        Duration duracionTrabajo = Duration.between(horaEntrada.toLocalTime(), horaSalida.toLocalTime());
+        return duracionTrabajo.toMinutes() / 60.0;
+    }
+
+	public double calcularSueldoDiario(Long id) {
+		double horasTrabajadas = calcularHorasTrabajadas(id);
+		double sueldoPorHora = obtenerSueldoPorHora(id);
+		return horasTrabajadas * sueldoPorHora;
+	}
+
+	  public double obtenerSueldoPorHora(Long id) {
+	        return empleadoRepositorio.findSueldoById(id);
+
+	  }
 }

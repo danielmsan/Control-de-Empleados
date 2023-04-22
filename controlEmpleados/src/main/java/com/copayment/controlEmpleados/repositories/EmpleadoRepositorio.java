@@ -1,6 +1,8 @@
 package com.copayment.controlEmpleados.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.copayment.controlEmpleados.models.Empleado;
@@ -9,5 +11,8 @@ import com.copayment.controlEmpleados.models.Empleado;
 
 @Repository
 public interface EmpleadoRepositorio extends JpaRepository<Empleado,Long>{
+
+	 @Query("SELECT d.sueldo FROM Empleado e JOIN e.departamento d WHERE e.id = :idEmpleado")
+	    Double findSueldoById(@Param("idEmpleado") Long idEmpleado);
 
 }
